@@ -18,6 +18,9 @@ public class Flock : MonoBehaviour
     [SerializeField] private float _maxSpeed;
     public float maxSpeed { get { return _maxSpeed; } }
 
+    [Header("Bounds Setup")]
+    [SerializeField] private float _boundsRadius = 15f;
+    public float boundsRadius { get { return _boundsRadius; } }
 
     [Header("Detection Distances")]
     [Range(0, 10)]

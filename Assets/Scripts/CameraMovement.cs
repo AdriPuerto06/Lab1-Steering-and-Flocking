@@ -1,3 +1,4 @@
+
 using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
@@ -6,8 +7,20 @@ public class CameraMovement : MonoBehaviour
 
     void Update()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        float horizontal = 0;
+        float vertical = 0;
+
+        if (Input.GetKey(KeyCode.LeftArrow))
+            horizontal = -1;
+
+        if (Input.GetKey(KeyCode.RightArrow))
+            horizontal = 1;
+
+        if (Input.GetKey(KeyCode.UpArrow))
+            vertical = 1;
+
+        if (Input.GetKey(KeyCode.DownArrow))
+            vertical = -1;
 
         Vector3 movement = new Vector3(horizontal, 0, vertical);
 

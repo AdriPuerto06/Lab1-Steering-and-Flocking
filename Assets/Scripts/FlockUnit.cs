@@ -36,7 +36,8 @@ public class FlockUnit : MonoBehaviour
         var cohesionVector = CalculateCohesionVector();
         var avoidanceVector = CalculateAvoidanceVector();
         var aligementVector = CalculateAligementVector();
-        var moveVector = cohesionVector + avoidanceVector + aligementVector;
+        var boundsVector = CalculateBoundsVector();
+        var moveVector = cohesionVector + avoidanceVector + aligementVector + boundsVector;
 
         moveVector = Vector3.SmoothDamp(myTransform.forward, moveVector, ref currentVelocity, smoothDamp);
         moveVector = moveVector.normalized * speed;
@@ -96,6 +97,19 @@ public class FlockUnit : MonoBehaviour
         }
         speed /= cohesionNeighbours.Count;
         speed = Mathf.Clamp(speed, assignedFlock.minSpeed, assignedFlock.maxSpeed);
+    }
+
+    private Vector3 CalculateBoundsVector()
+    {
+        Vector3 center = assignedFlock.transform.position;
+        Vector3 offset = center - myTransform.position;
+
+        if (offset.magnitude > assignedFlock.boundsRadius)
+        {
+            return offset.normalized;
+        }
+
+        return Vector3.zero;
     }
 
     private Vector3 CalculateCohesionVector()

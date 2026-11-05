@@ -1,5 +1,5 @@
+
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,11 +8,13 @@ public class SeekandFlee : MonoBehaviour
     NavMeshAgent agent;
     public GameObject target;
     public float distance = 5;
+    public float fleeTime = 5;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private bool fleeing = false;
+
     void Start()
     {
-        agent = this.GetComponent<NavMeshAgent>();
+        agent = GetComponent<NavMeshAgent>();
     }
 
     void Seek(Vector3 location)
@@ -20,28 +22,45 @@ public class SeekandFlee : MonoBehaviour
         agent.SetDestination(location);
     }
 
-    void Flee(Vector3 location) 
-    { 
-        Vector3 fleeVector = location - this.transform.position;
-        agent.SetDestination(this.transform.position - fleeVector);
+    void Flee(Vector3 location)
+    {
+        Vector3 fleeVector = transform.position - location;
+        agent.SetDestination(transform.position + fleeVector.normalized * 10);
     }
 
+    IEnumerator FleeCoroutine()
+    {
+        fleeing = true;
 
+        float timer = 0;
 
-    // Update is called once per frame
+        while (timer < fleeTime)
+        {
+            Flee(target.transform.position);
+
+            timer += Time.deltaTime;
+
+            yield return null;
+        }
+
+        fleeing = false;
+    }
+
     void Update()
     {
+        float vectordistance = Vector3.Distance(
+            transform.position,
+            target.transform.position
+        );
 
-        float vectordistance = Vector3.Distance(agent.transform.position, target.transform.position);
+        if (!fleeing && vectordistance <= distance)
+        {
+            StartCoroutine(FleeCoroutine());
+        }
 
-        if (vectordistance > distance)
+        if (!fleeing)
         {
             Seek(target.transform.position);
         }
-        else
-        {
-            Flee(target.transform.position);
-        }
-            
     }
 }
